@@ -20,22 +20,21 @@ class File_Reader(object):
 
         lines = file.readlines()
 
-
         for line in lines:
-            line = line.strip()
-            #start verification comment
-            if "#FV" in line:
-                current_verification_block.append(line)
-                in_block = True
-            #end verification comment
-            elif "#END_FV" in line:
-                in_block = False
-                verification_blocks.append(current_verification_block)
-                current_verification_block = []
-            #in a verification command
-            elif in_block == True:
-                print("hit", current_verification_block)
-                current_verification_block.append(line)
+            if line and not line.isspace():
+                line = line.strip()
+                #start verification comment
+                if "#FV" in line:
+                    current_verification_block.append(line)
+                    in_block = True
+                #end verification comment
+                elif "#END_FV" in line:
+                    in_block = False
+                    verification_blocks.append(current_verification_block)
+                    current_verification_block = []
+                #in a verification command and not a commment
+                elif in_block == True and not "#" in line:
+                    current_verification_block.append(line)
 
         return verification_blocks
 

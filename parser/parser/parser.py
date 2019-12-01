@@ -64,8 +64,8 @@ class Parser():
     def _get_type_pre_and_post_conditions(self, first_line_verification_block):
         split_line = first_line_verification_block.split("_")
         type = split_line[1]
-        pre_condition = split_line[2]
-        post_condition = split_line[3]
+        pre_condition = split_line[2].split(',')
+        post_condition = split_line[3].split(',')
         return type, pre_condition, post_condition
 
     def _replace_variable_name(self,vars_and_commands, variable):

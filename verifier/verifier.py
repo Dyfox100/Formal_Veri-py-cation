@@ -3,28 +3,31 @@ import z3
 class Verifier():
 
     def verify(self, parsed_verification_blocks):
-
+        block_counter = 0
         for parsed_verification_block in parsed_verification_blocks:
+            block_counter += 1
+            #number of block to make it easier to find in code.
+            parsed_verification_block['Block Number'] = block_counter
+
             type = parsed_verification_block['type']
 
+            counter_example = ""
+
+            #try to find counter example. If found return it, else continue.
             if type == 'invariant':
                 counter_example = self._verify_invariant(parsed_verification_block)
-                if counter_example:
-                    parsed_verification_block['Counter Example'] = counter_example
-                    return parsed_verification_block
 
             elif type == 'conditional':
                 counter_example = self._verify_conditional(parsed_verification_block)
-                if counter_example:
-                    parsed_verification_block['Counter Example'] = counter_example
-                    return parsed_verification_block
 
             elif type == 'command':
                 counter_example = self._verify_command(parsed_verification_block)
-                if counter_example:
-                    parsed_verification_block['Counter Example'] = counter_example
-                    return parsed_verification_block
 
+            if counter_example:
+                parsed_verification_block['Counter Example'] = counter_example
+                return parsed_verification_block
+
+        #no counter examples found, all blocks verified
         return 'All Conditions Verified and Passed'
 
     def _verify_invariant(self, parsed_verification_block):
@@ -56,7 +59,6 @@ class Verifier():
         pass
 
 
-
 if __name__ == '__main__':
     verifier = Verifier()
     parsed_blocks = [
@@ -70,7 +72,7 @@ if __name__ == '__main__':
 
                         {'type': 'invariant',
                         'precondition': ['j0==0', 'initial0==x0'],
-                           'postcondition': ['x2==initial0+2*j1'],
+                           'postcondition': ['x2==initial0+3*j1'],
                             'code': 'while j<i:',
                              'commands': {'initial0': 'x0', 'x': 'x', 'x0': 'x', 'x1': 'x0 + 1', 'x2': 'x1 + 1', 'j': 'j', 'j0': 'j', 'j1': 'j0 + 1'}},
             ]

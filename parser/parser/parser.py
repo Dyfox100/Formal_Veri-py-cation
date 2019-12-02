@@ -14,6 +14,7 @@ class Parser():
             if "#FV" not in FV_line:
                 raise ValueError("Incorrect Line is first in verification_block")
 
+
             type, pre_conditions, post_conditions = self._get_type_pre_and_post_conditions(FV_line)
 
             vars_and_commands = {}
@@ -27,12 +28,12 @@ class Parser():
             else:
                 code = ""
 
+
             for command in verification_block:
                 #split left and right sides of expression on equals sign.
                 left_and_right_sides_expression = command.split('=', 1)
                 if len(left_and_right_sides_expression) != 2:
                     raise ValueError("Left and Right sides of Expression are not of length 2")
-
 
                 expression, vars_and_commands = self._replace_variable_names(left_and_right_sides_expression[1], vars_and_commands)
 
@@ -45,7 +46,6 @@ class Parser():
                     new_incrementer = int(incrementer) + 1
                     variable_assigned_to = variable_stem + str(new_incrementer)
 
-                print(expression)
                 vars_and_commands[variable_assigned_to] = expression
 
             for index, post_condition in enumerate(post_conditions):
@@ -64,7 +64,7 @@ class Parser():
 
     def _get_type_pre_and_post_conditions(self, first_line_verification_block):
         split_line = first_line_verification_block.split("_")
-
+              
         type = split_line[1]
         pre_conditions = split_line[2].split(',')
         post_conditions = split_line[3].split(',')
@@ -88,6 +88,7 @@ class Parser():
 
                 expression = expression.replace(variable_stem, variable_stem + str(int(variable_incrementer)))
         return expression, vars_and_commands
+
 
 
 if __name__=='__main__':

@@ -36,7 +36,7 @@ class Parser():
 
     def _parse_conditionals(self, verification_block, type, pre_conditions, post_conditions):
         pass
-        
+
     def _parse_command_and_invariant(self, verification_block, type, pre_conditions, post_conditions):
         vars_and_commands = {}
         for index, pre_condition in enumerate(pre_conditions):
@@ -48,25 +48,7 @@ class Parser():
         else:
             code = ""
 
-        for command in verification_block:
-            #split left and right sides of expression on equals sign.
-            left_and_right_sides_expression = command.split('=', 1)
-            if len(left_and_right_sides_expression) != 2:
-                raise ValueError("Left and Right sides of Expression are not of length 2")
-
-
-            expression, vars_and_commands = self._replace_variable_names(left_and_right_sides_expression[1], vars_and_commands)
-
-            variable_stem = left_and_right_sides_expression[0].strip()
-            vars_and_commands[variable_stem + '0'] = ""
-            variable_assigned_to = variable_stem + '1'
-
-            while variable_assigned_to in vars_and_commands:
-                incrementer = variable_assigned_to.replace(variable_stem, "")
-                new_incrementer = int(incrementer) + 1
-                variable_assigned_to = variable_stem + str(new_incrementer)
-
-            vars_and_commands[variable_assigned_to] = expression
+        vars_and_commands = self._parse_commands(verification_block, vars_and_commands)
 
         for index, post_condition in enumerate(post_conditions):
             post_conditions[index], vars_and_commands = self._replace_variable_names(post_condition, vars_and_commands)
@@ -80,6 +62,29 @@ class Parser():
         }
 
         return parsed_block
+
+    def _parse_commands(self, commands, parsed_vars_and_commands):
+
+        for command in commands:
+            #split left and right sides of expression on equals sign.
+            left_and_right_sides_expression = command.split('=', 1)
+            if len(left_and_right_sides_expression) != 2:
+                raise ValueError("Left and Right sides of Expression are not of length 2")
+
+            expression, parsed_vars_and_commands = self._replace_variable_names(left_and_right_sides_expression[1], parsed_vars_and_commands)
+
+            variable_stem = left_and_right_sides_expression[0].strip()
+            parsed_vars_and_commands[variable_stem + '0'] = ""
+            variable_assigned_to = variable_stem + '1'
+
+            while variable_assigned_to in parsed_vars_and_commands:
+                incrementer = variable_assigned_to.replace(variable_stem, "")
+                new_incrementer = int(incrementer) + 1
+                variable_assigned_to = variable_stem + str(new_incrementer)
+
+            parsed_vars_and_commands[variable_assigned_to] = expression
+
+        return parsed_vars_and_commands
 
     def _replace_variable_names(self, expression, vars_and_commands):
         vars_in_expression = re.split(r"[=<>%+\/\*\-\(\)(0-9)]", expression)

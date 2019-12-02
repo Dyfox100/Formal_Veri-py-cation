@@ -44,7 +44,8 @@ class Verifier():
 
         commands = parsed_verification_block['commands']
         for command in commands.keys():
-            solver.add(eval(command + '==' + commands[command]))
+            if commands[command].strip():
+                solver.add(eval(command + '==' + commands[command]))
 
         if str(solver.check()) == 'sat':
             return solver.model()

@@ -96,11 +96,20 @@ class Parser():
         for index, pre_condition in enumerate(pre_conditions):
             pre_conditions[index], vars_and_commands = self._replace_variable_names(pre_condition, vars_and_commands)
 
+        invariant_pre_conditions = []
         #get while condition if parsing an invariant.
-        if type in ['invariant']:
+        if type == 'invariant':
             while_condition = verification_block.pop(0).split('while')[1]
             while_condition_renamed, vars_and_commands = self._replace_variable_names(while_condition, vars_and_commands)
             code = 'while' + while_condition_renamed
+            #Add a version of each post condition renamed with the variables at the
+            #begining of the loop to prove it is actually an invariant,
+            #just correct at end of loop.
+            for post_condition in post_conditions:
+                invariant_pre_condition, _ = self._replace_variable_names(post_condition, vars_and_commands)
+                pre_conditions.append(invariant_pre_condition)
+
+
         else:
             code = ""
 
@@ -170,7 +179,7 @@ class Parser():
 if __name__=='__main__':
     parser = Parser()
     print(parser.parse([
-            ['#FV_invariant_j==0,x==initial_x==initial+j', 'while j<i:', 'x = x + 1', 'x = x**1', 'x = x + 1','j= x + j', 'j = j + 1'],
-            ['#FV_command_j==4_j==7', 'j = j + 3'],
-            ['#FV_conditional_True_x==4 + j', 'if (x!=4):', 'x = 4', 'x = x + j', 'else:', 'x = x + j']]
+            ['#FV_invariant_j==0,x==initial_x==initial+j',15, 'while j<i:', 'x = x + 1', 'x = x**1', 'x = x + 1','j= x + j', 'j = j + 1'],
+            ['#FV_command_j==4_j==7',10,  'j = j + 3'],
+            ['#FV_conditional_True_x==4 + j',22, 'if (x!=4):', 'x = 4', 'x = x + j', 'else:', 'x = x + j']]
             ))

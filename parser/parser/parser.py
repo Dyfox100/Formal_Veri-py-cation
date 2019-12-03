@@ -142,6 +142,7 @@ class Parser():
 
     def _replace_variable_names(self, expression, vars_and_commands):
         vars_in_expression = self._extract_variable_names_from_expression(expression)
+        expression = ' ' + expression + ' '
         for var in vars_in_expression:
             variable_stem = var.strip()
             if variable_stem:
@@ -155,12 +156,13 @@ class Parser():
                 if not variable_stem + '0' in vars_and_commands:
                     vars_and_commands[variable_stem + '0'] = ""
 
-                expression = expression.replace(variable_stem, variable_stem + str(int(variable_incrementer)))
+                expression = re.sub(r"(?<=[^a-zA-Z])" + variable_stem + "[0-9]*(?=[^a-zA-Z])", variable_stem + str(int(variable_incrementer)),expression)
 
+        expression = expression.strip()
         return expression, vars_and_commands
 
     def _extract_variable_names_from_expression(self, expression):
-        return re.split(r"True|False|[!:=<>%+\/\*\-\(\)(0-9)]", expression)
+        return re.split(r"True|False|[!:=<>%+\/\*\-\(\)0-9]", expression)
 
 if __name__=='__main__':
     parser = Parser()

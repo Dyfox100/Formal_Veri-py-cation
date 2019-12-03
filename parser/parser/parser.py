@@ -13,15 +13,16 @@ class Parser():
             FV_line = verification_block.pop(0)
             if "#FV" not in FV_line:
                 raise ValueError("Incorrect Line is first in verification_block")
+            line_number = verification_block.pop(0)
 
             type, pre_conditions, post_conditions = self._get_type_pre_and_post_conditions(FV_line)
 
             if type == 'conditional':
                 parsed_blocks.append(self._parse_conditionals(\
-                verification_block, type, pre_conditions, post_conditions))
+                verification_block, type, line_number, pre_conditions, post_conditions))
             else:
                 parsed_blocks.append(self._parse_command_and_invariant(\
-                    verification_block, type, pre_conditions, post_conditions))
+                    verification_block, type, line_number, pre_conditions, post_conditions))
 
         return parsed_blocks
 
@@ -34,7 +35,7 @@ class Parser():
 
         return type, pre_conditions, post_conditions
 
-    def _parse_conditionals(self, verification_block, type, pre_conditions, post_conditions):
+    def _parse_conditionals(self, verification_block, type, line_number, pre_conditions, post_conditions):
         vars_and_commands = {}
 
         for index, pre_condition in enumerate(pre_conditions):
@@ -81,6 +82,7 @@ class Parser():
 
         parsed_block = {
             'type': type,
+            'line_number': line_number,
             'precondition': pre_conditions,
             'postcondition': post_conditions,
             'code': code,
@@ -89,7 +91,7 @@ class Parser():
         }
         return parsed_block
 
-    def _parse_command_and_invariant(self, verification_block, type, pre_conditions, post_conditions):
+    def _parse_command_and_invariant(self, verification_block, type, line_number, pre_conditions, post_conditions):
         vars_and_commands = {}
         for index, pre_condition in enumerate(pre_conditions):
             pre_conditions[index], vars_and_commands = self._replace_variable_names(pre_condition, vars_and_commands)
@@ -109,6 +111,7 @@ class Parser():
 
         parsed_block = {
             'type': type,
+            'line_number': line_number,
             'precondition': pre_conditions,
             'postcondition': post_conditions,
             'code': code,

@@ -8,9 +8,7 @@ class File_Reader(object):
 
     def __init__(self, path):
         self._path = path
-        #if not os.path.isabs(self._path):
-            #self._path = os.path.join(os.path.abspath(__main__.__file__), path)
-
+        
     def read_file(self):
         file = open(self._path, "r")
 
@@ -20,12 +18,13 @@ class File_Reader(object):
 
         lines = file.readlines()
 
-        for line in lines:
+        for line_num, line in enumerate(lines):
             if line and not line.isspace():
                 line = line.strip()
                 #start verification comment
                 if "#FV" in line:
                     current_verification_block.append(line)
+                    current_verification_block.append(line_num + 1)
                     in_block = True
                 #end verification comment
                 elif "#END_FV" in line:

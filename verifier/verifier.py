@@ -5,9 +5,6 @@ class Verifier():
     def verify(self, parsed_verification_blocks):
         block_counter = 0
         for parsed_verification_block in parsed_verification_blocks:
-            block_counter += 1
-            #number of block to make it easier to find in code.
-            parsed_verification_block['Block Number'] = block_counter
 
             type = parsed_verification_block['type']
 
@@ -24,8 +21,7 @@ class Verifier():
                 counter_example = self._verify_command(parsed_verification_block)
 
             if counter_example:
-                parsed_verification_block['Counter Example'] = counter_example
-                return parsed_verification_block
+                return 'Error Found in Block At Line Number: ' + str(parsed_verification_block['line_number'])
 
         #no counter examples found, all blocks verified
         return 'All Conditions Verified and Passed'

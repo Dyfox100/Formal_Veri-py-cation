@@ -88,31 +88,3 @@ class Verifier():
             return solver.model()
         else:
              return None
-
-
-
-if __name__ == '__main__':
-    verifier = Verifier()
-    parsed_blocks = [
-          {
-          'type': 'command',
-           'precondition': ['j0==4'],
-           'postcondition': ['j1==7'],
-           'code': '',
-            'commands': {'j': '', 'j0': '', 'j1': 'j0 + 3'}
-            },
-            {
-            'type': 'invariant',
-            'precondition': ['j0==0', 'initial0==x0'],
-            'postcondition': ['x2==initial0+2*j1'],
-            'code': 'while j<i:',
-            'commands': {'initial0': '', 'x': '', 'x0': '', 'x1': 'x0 + 1', 'x2': 'x1 + 1', 'j': 'j', 'j0': 'j', 'j1': 'j0 + 1'}},
-            {
-            'type': 'conditional',
-             'precondition': ['True'],
-             'postcondition': ['x2==4 + j0'],
-             'code': 'if (x0!=4):',
-             'if-commands': {'x0': '', 'x1': ' 4', 'x2': ' x1 + j0', 'j0': ''},
-             'else-commands': {'x0': '', 'j0': '', 'x2': ' x0 + j0'}}
-            ]
-    print(verifier.verify(parsed_blocks))

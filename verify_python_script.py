@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import argparse
 from parser.parser.parser import Parser
 from parser.file_reader.file_reader import File_Reader
